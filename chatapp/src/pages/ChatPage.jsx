@@ -1,21 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChatMessage from "../components/ChatMessage";
-import { Picker } from "emoji-mart";
+import Picker from "emoji-picker-react";
 import UserMention from "../components/UserMention";
-import { Box, Button, Flex, Input } from "@chakra-ui/react";
-// import "emoji-mart/css/emoji-mart.css";
+import { Box, Button, Icon, Input } from "@chakra-ui/react";
+import { BsEmojiSmile } from "react-icons/bs";
+import NavBar from "../components/NavBar";
+import { useTheme } from "../context/ThemeContext";
 
+//User List Provided
 const user_list = ["Alan", "Bob", "Carol", "Dean", "Elin"];
+
 const ChatPage = () => {
   let [currentMessage, setCurrentMessage] = useState("");
   let [mentionVisible, setMentionVisible] = useState(false);
+  let [showEmoji, setShowEmoji] = useState(false);
   let [messages, setMessages] = useState([]);
-  let [currentTime, setCurrentTime] = useState("");
-  let [user, setUser] = useState("");
-  //   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  let { theme } = useTheme();
 
-  //? GET TIME
+  //Emoji show on click
+  let handleEmojiClick = (event) => {
+    setCurrentMessage((prev) => prev + event.emoji);
+    setShowEmoji(false);
+  };
 
+  //Get Current time
   let getCurrentTime = () => {
     let date = new Date();
     let hours = date.getHours();
@@ -26,7 +34,7 @@ const ChatPage = () => {
     return `${formattedHours}:${formattedMinutes} ${period} `;
   };
 
-  //? SEND MESSAGE
+  //Send message on clicking button
   let handleSendMessage = () => {
     if (currentMessage.trim() !== "") {
       let mentionMessage;
@@ -46,24 +54,20 @@ const ChatPage = () => {
     }
   };
 
-  //Onlike
+  //Onliking the thread
   let handleLike = (index) => {
     let upDatingLikeMessage = [...messages];
     upDatingLikeMessage[index].likes += 1;
     setMessages(upDatingLikeMessage);
   };
 
-  //emoji
-
-  let handleEmojiSelect = (emoji) => {};
   //mention
-
   let handleMention = (mention) => {
     setCurrentMessage(currentMessage + `${mention}`);
     setMentionVisible(false);
   };
 
-  //keyDown
+  //keyDownHandler To Track @ button for mentioning
   useEffect(() => {
     let keyDownHandler = (e) => {
       if (e.key === "@") {
@@ -79,10 +83,23 @@ const ChatPage = () => {
   }, [currentMessage]);
 
   return (
-    <Box minH={"100vh"} bgColor={"gray.200"} p={10} position={"relative"}>
-      <h1>Messages</h1>
+    <Box
+      minH={"100vh"}
+      bgColor={theme === "light" ? "gray.200" : "rgb(5,12,27)"}
+      p={"0px 30px 30px 30px"}
+      position={"relative"}
+    >
+      {/* NavBar */}
+      <Box
+        position={"sticky"}
+        zIndex={"4"}
+        top={"0"}
+        bgColor={theme === "light" ? "gray.200" : "rgb(5,12,27)"}
+      >
+        <NavBar />
+      </Box>
 
-      <Box display={"flex"} gap={"30"} flexDirection={"column"}>
+      <Box display={"flex"} gap={"30"} flexDirection={"column"} mt={10}>
         {messages.map((message, index) => (
           <Box key={index} display={"flex"} gap={"30"}>
             <ChatMessage
@@ -100,7 +117,13 @@ const ChatPage = () => {
           alignItems: "center",
         }}
       >
-        <Box h={"80px"} bgColor={"gray.200"} position="fixed" bottom="0">
+        {/* InputAndButton */}
+        <Box
+          h={"80px"}
+          bgColor={theme === "light" ? "gray.200" : "rgb(5,12,27)"}
+          position="fixed"
+          bottom="0"
+        >
           <Box display={"flex"} gap={"5"}>
             <Input
               type="text"
@@ -110,11 +133,13 @@ const ChatPage = () => {
               onFocus={() => setMentionVisible(false)}
               alignItems=""
               borderRadius={"50px"}
-              borderColor={"gray.500"}
+              borderColor={theme === "light" ? "gray.500" : "white"}
               _hover={{ borderColor: "gray.600" }}
               borderWidth={"2px"}
-              w={"90vw"}
+              w={{ base: "60vw", sm: "60vw", md: "80vw", lg: "90vw" }}
               mb={"6"}
+              position={"relative"}
+              textColor={theme === "light" ? "" : "white"}
             />
             <Button
               onClick={handleSendMessage}
@@ -126,15 +151,40 @@ const ChatPage = () => {
             </Button>
           </Box>
         </Box>
-        {/* {showEmojiPicker && (
-          <Picker onSelect={(emoji) => handleEmojiSelect(emoji.native)} />
-        )} */}
+        <Icon
+          as={BsEmojiSmile}
+          boxSize={6}
+          color={theme === "light" ? "black" : "white"}
+          onClick={() => setShowEmoji(!showEmoji)}
+          cursor="pointer"
+          position="fixed"
+          bottom="12"
+          right={"130px"}
+          _hover={{ color: "red" }}
+        ></Icon>
+
+        {/* Mention */}
+
         {mentionVisible && (
-          
-          <Box  position="fixed" bottom="20" left={"10"} border="2px solid black" px={10}  py={2}  bgColor={"white"}   borderRadius="20px 20px 0px 20px">
-          <UserMention userList={user_list} onMentionClick={handleMention} />
+          <Box
+            position="fixed"
+            bottom="20"
+            left={"10"}
+            border="2px solid black"
+            px={10}
+            py={2}
+            bgColor={"white"}
+            borderRadius="20px 20px 0px 20px"
+          >
+            <UserMention userList={user_list} onMentionClick={handleMention} />
           </Box>
-         
+        )}
+        {/* ShowEmoji */}
+        {showEmoji && (
+          <Picker
+            theme={theme === "light" ? "light" : "dark"}
+            onEmojiClick={handleEmojiClick}
+          />
         )}
       </div>
     </Box>
