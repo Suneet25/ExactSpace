@@ -25,15 +25,15 @@ Here you do chats with friends.
 Clean UI
 
 ----
-(/ExtraSpace/chatapp/src//assets/pic1.png)
+![image](./src/assets/pic1.png)
 ----
 ### :small_blue_diamond: Dark mode and mentioning on clicking "@"
-(/ExtraSpace/chatapp/src//assets/pic2.png)
+![image](./src/assets/pic2.png)
 ----
 ### :small_blue_diamond: Emoji 
-(/ExtraSpace/chatapp/src//assets/pic3.png)
+![image](./src/assets/pic3.png)
 ----
-(/ExtraSpace/chatapp/src//assets/pic4.png)
+![image](./src/assets/pic4.png)
 
 
 
