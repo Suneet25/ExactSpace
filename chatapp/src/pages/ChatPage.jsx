@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import ChatMessage from "../components/ChatMessage";
 import Picker from "emoji-picker-react";
 import UserMention from "../components/UserMention";
-import { Box, Button, Icon, Input } from "@chakra-ui/react";
+import { Box, Button, Icon, Input, useToast } from "@chakra-ui/react";
 import { BsEmojiSmile } from "react-icons/bs";
 import NavBar from "../components/NavBar";
 import { useTheme } from "../context/ThemeContext";
@@ -17,6 +17,7 @@ const ChatPage = () => {
   let [showEmoji, setShowEmoji] = useState(false);
   let [messages, setMessages] = useState([]);
   let { theme } = useTheme();
+  let toast = useToast();
 
   //Emoji show on click
   let handleEmojiClick = (event) => {
@@ -78,8 +79,16 @@ const ChatPage = () => {
 
   //deleteChat
   let handleDeleteChat = async (id) => {
-    await axios.delete(`https://beautiful-jay-snaps.cyclic.app/api/delete-chat/${id}`);
+    await axios.delete(
+      `https://beautiful-jay-snaps.cyclic.app/api/delete-chat/${id}`
+    );
     getChats();
+    toast({
+      title: `Chat Deleted`,
+      status: "success",
+      position: "top-right",
+      isClosable: true,
+    });
   };
 
   //mention
@@ -90,7 +99,9 @@ const ChatPage = () => {
 
   //getChats
   let getChats = async () => {
-    let res = await axios.get(`https://beautiful-jay-snaps.cyclic.app/api/get-chat`);
+    let res = await axios.get(
+      `https://beautiful-jay-snaps.cyclic.app/api/get-chat`
+    );
 
     setMessages(res.data);
   };
