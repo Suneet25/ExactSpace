@@ -52,7 +52,7 @@ const ChatPage = () => {
       };
 
       let res = await axios.post(
-        `http://localhost:8000/api/add-chat`,
+        `https://beautiful-jay-snaps.cyclic.app/api/add-chat`,
         newMessage
       );
 
@@ -70,7 +70,7 @@ const ChatPage = () => {
 
     upDatingLikeMessage[messageIndex].likes += 1;
     let res = await axios.put(
-      `http://localhost:8000/api/update-chat/${upDatingLikeMessage[messageIndex]._id}`,
+      `https://beautiful-jay-snaps.cyclic.app/api/update-chat/${upDatingLikeMessage[messageIndex]._id}`,
       upDatingLikeMessage
     );
     getChats();
@@ -78,7 +78,7 @@ const ChatPage = () => {
 
   //deleteChat
   let handleDeleteChat = async (id) => {
-    await axios.delete(`http://localhost:8000/api/delete-chat/${id}`);
+    await axios.delete(`https://beautiful-jay-snaps.cyclic.app/api/delete-chat/${id}`);
     getChats();
   };
 
@@ -90,7 +90,7 @@ const ChatPage = () => {
 
   //getChats
   let getChats = async () => {
-    let res = await axios.get(`http://localhost:8000/api/get-chat`);
+    let res = await axios.get(`https://beautiful-jay-snaps.cyclic.app/api/get-chat`);
 
     setMessages(res.data);
   };

@@ -36,5 +36,15 @@ Clean UI
 ![image](./chatapp/src/assets/pic4.png)
 
 
+## API Routes
+
+The following table lists the available API routes and their descriptions:
+
+| Route | Method | Description |
+|-------|-------------|----------|
+| /api/get-chat | `GET` | Get all user's chats |
+| /api/add-chat | `POST` | By checking user's credentials allow them to log-in in the web-applicattion |
+| /api/update-chat/:id | `PUT` |	Update the message when click on like button |
+| /api/delete-chat/:id | `DELETE` | Delete the message when click on delete button |
 
 Thank you 💙
