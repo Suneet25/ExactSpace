@@ -1,10 +1,21 @@
-import { Avatar, Badge, Box, Flex, Icon, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Flex,
+  Icon,
+  IconButton,
+  Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
+import { ImBin2 } from "react-icons/im";
 import { useTheme } from "../context/ThemeContext";
+import axios from "axios";
 
-const ChatMessage = ({ message, onLike }) => {
+const ChatMessage = ({ message, onLike,handleDeleteChat }) => {
   let { theme } = useTheme();
+ 
   return (
     <Flex direction={"column"} gap={2}>
       <Flex gap="3" alignItems={"center"}>
@@ -31,7 +42,6 @@ const ChatMessage = ({ message, onLike }) => {
           borderRadius="0 20px 20px 20px"
           bgColor={"white"}
           ml={"50px"}
-        
         >
           {message.text}
         </Box>
@@ -66,6 +76,22 @@ const ChatMessage = ({ message, onLike }) => {
             </Badge>
           )}
         </Flex>
+        <Box position="relative" width="100px" height="100px">
+          <IconButton
+            icon={<ImBin2 />}
+            aria-label="Star"
+            size="md" // Adjust the size as needed
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            opacity={0.5}
+            transition="opacity 0.2s"
+            _hover={{ opacity: 1 }}
+            color={theme === "light" ? "" : "red"}
+            onClick={() => handleDeleteChat(message._id)}
+          />
+        </Box>
       </Flex>
     </Flex>
   );

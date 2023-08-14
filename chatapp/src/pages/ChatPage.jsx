@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import ChatMessage from "../components/ChatMessage";
 import Picker from "emoji-picker-react";
 import UserMention from "../components/UserMention";
@@ -6,6 +6,7 @@ import { Box, Button, Icon, Input } from "@chakra-ui/react";
 import { BsEmojiSmile } from "react-icons/bs";
 import NavBar from "../components/NavBar";
 import { useTheme } from "../context/ThemeContext";
+import axios from "axios";
 
 //User List Provided
 const user_list = ["Alan", "Bob", "Carol", "Dean", "Elin"];
@@ -35,7 +36,7 @@ const ChatPage = () => {
   };
 
   //Send message on clicking button
-  let handleSendMessage = () => {
+  let handleSendMessage = async () => {
     if (currentMessage.trim() !== "") {
       let mentionMessage;
       if (currentMessage.includes("@")) {
@@ -49,16 +50,36 @@ const ChatPage = () => {
         likes: 0,
         time: currentTime,
       };
-      setMessages([...messages, newMessage]);
+
+      let res = await axios.post(
+        `http://localhost:8000/api/add-chat`,
+        newMessage
+      );
+
+      getChats();
       setCurrentMessage("");
     }
   };
 
   //Onliking the thread
-  let handleLike = (index) => {
-    let upDatingLikeMessage = [...messages];
-    upDatingLikeMessage[index].likes += 1;
-    setMessages(upDatingLikeMessage);
+  let handleLike = async (index) => {
+    var messageIndex = messages.chats.findIndex(function (message) {
+      return message._id === index;
+    });
+    let upDatingLikeMessage = [...messages.chats];
+
+    upDatingLikeMessage[messageIndex].likes += 1;
+    let res = await axios.put(
+      `http://localhost:8000/api/update-chat/${upDatingLikeMessage[messageIndex]._id}`,
+      upDatingLikeMessage
+    );
+    getChats();
+  };
+
+  //deleteChat
+  let handleDeleteChat = async (id) => {
+    await axios.delete(`http://localhost:8000/api/delete-chat/${id}`);
+    getChats();
   };
 
   //mention
@@ -66,6 +87,17 @@ const ChatPage = () => {
     setCurrentMessage(currentMessage + `${mention}`);
     setMentionVisible(false);
   };
+
+  //getChats
+  let getChats = async () => {
+    let res = await axios.get(`http://localhost:8000/api/get-chat`);
+
+    setMessages(res.data);
+  };
+
+  useLayoutEffect(() => {
+    getChats();
+  }, []);
 
   //keyDownHandler To Track @ button for mentioning
   useEffect(() => {
@@ -100,15 +132,17 @@ const ChatPage = () => {
       </Box>
 
       <Box display={"flex"} gap={"30"} flexDirection={"column"} mt={10}>
-        {messages.map((message, index) => (
-          <Box key={index} display={"flex"} gap={"30"}>
-            <ChatMessage
-              key={index}
-              message={message}
-              onLike={() => handleLike(index)}
-            />
-          </Box>
-        ))}
+        {messages &&
+          messages?.chats?.map((message, index) => (
+            <Box key={index} display={"flex"} gap={"30"}>
+              <ChatMessage
+                key={index}
+                message={message}
+                handleDeleteChat={handleDeleteChat}
+                onLike={() => handleLike(message._id)}
+              />
+            </Box>
+          ))}
       </Box>
       <div
         style={{
@@ -159,7 +193,7 @@ const ChatPage = () => {
           cursor="pointer"
           position="fixed"
           bottom="12"
-          right={"130px"}
+          right={{ base: "135px", sm: "140px", md: "130px", lg: "130px" }}
           _hover={{ color: "red" }}
         ></Icon>
 
